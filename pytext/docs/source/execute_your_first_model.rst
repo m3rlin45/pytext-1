@@ -22,7 +22,7 @@ We want to run the model on our test dataset and see how well it performs. Some 
 
 .. code-block:: console
 
-    (pytext) $ pytext test --no-cuda < "$CONFIG"
+    (pytext) $ pytext test < "$CONFIG"
 
     Intent Metrics
             Per label scores                                Precision       Recall          F1              Support
