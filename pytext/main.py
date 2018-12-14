@@ -201,13 +201,16 @@ def test(context, model_snapshot, test_path, use_cuda):
     """
     if model_snapshot:
         print(f"Loading model snapshot and config from {model_snapshot}")
+        if use_cuda is None:
+            raise Exception("if --model-snapshot is set --use-cuda/--no-cuda must be set")
     else:
         print(f"No model snapshot provided, loading from config")
         config = parse_config(context.obj.load_config())
         model_snapshot = config.save_snapshot_path
+        use_cuda = config.use_cuda_if_available
         print(f"Configured model snapshot {model_snapshot}")
     print("\n=== Starting testing...")
-    test_model_from_snapshot_path(model_snapshot, test_path, use_cuda)
+    test_model_from_snapshot_path(model_snapshot, use_cuda, test_path)
 
 
 @main.command()
@@ -223,8 +226,8 @@ def train(context):
     print("\n=== Starting testing...")
     test_model_from_snapshot_path(
         config.save_snapshot_path,
-        config.task.data_handler.test_path,
         config.use_cuda_if_available,
+        config.task.data_handler.test_path,
     )
 
 

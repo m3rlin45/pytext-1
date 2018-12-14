@@ -105,27 +105,25 @@ def export_saved_model_to_caffe2(
 def test_model(test_config: TestConfig, metrics_channel: Channel = None) -> Any:
     return test_model_from_snapshot_path(
         test_config.load_snapshot_path,
-        test_config.test_path,
         test_config.use_cuda_if_available,
+        test_config.test_path,
         metrics_channel,
     )
 
 
 def test_model_from_snapshot_path(
     snapshot_path: str,
+    use_cuda_if_available: bool,
     test_path: Optional[str] = None,
-    use_cuda_if_available: Optional[bool] = None,
     metrics_channel: Optional[Channel] = None,
 ):
+    _set_cuda(use_cuda_if_available)
     task, train_config = load(snapshot_path)
-    if use_cuda_if_available is None:
-        use_cuda_if_available = train_config.use_cuda_if_available
     if not test_path:
         test_path = train_config.task.data_handler.test_path
     if metrics_channel is not None:
         task.metric_reporter.add_channel(metrics_channel)
 
-    _set_cuda(use_cuda_if_available)
     return (task.test(test_path), train_config.task.metric_reporter.output_path)
 
 
